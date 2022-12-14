@@ -1,8 +1,11 @@
 const
-    fs = require('fs'),
+    {
+        mkdirSync,
+        existsSync
+    } = require('fs'),
     gradient = require('gradient-string'),
     readline = require('readline-sync'),
-    tables = require('cli-table3'),
+    tables = require('text-table'),
     {
         getMoney,
         addMoney,
@@ -11,18 +14,15 @@ const
         getChestKeys,
         addChestKeys,
         getFileList,
-        getGameSaveFiles,
         changeUsername,
         parseGameDirectory,
-        characterArray, exportGameSave
+        characterArray,
+        exportGameSave
     } = require('./modules/TON'),
-    {
-        log
-    } = require('./modules/logging')
-
+    usr = process.env.USER || process.env.username
 const shell = (file) => {
     let
-        command = readline.question(gradient.instagram(`┌[${process.env.USER || process.env.username}]\n└>`)),
+        command = readline.question(gradient.instagram(`┌${'─'.repeat(usr.length + 18)}┐\n│ ${usr}@TON-Save-Editor │\n├${'─'.repeat(usr.length + 18)}┘\n└>`)),
         arguments = command.split(" ")
     switch (arguments[0].toLowerCase()) {
         case "addmoney":
@@ -96,20 +96,19 @@ const shell = (file) => {
             console.log(gradient("green", "green")(`Backup saved to ${__dirname}/backups/TON/${filename}`))
             break
         case "help":
-            let cmds = new tables({
-                head: ["Command", "Argument 1", "Argument 2", "Description"],
-                colWidths: [100, 100, 100, 300]
-            })
-            cmds.push(
+            let cmds = tables([
+                ["Command", "Argument 1", "Argument 2", "Description"],
+                ["───────", "──────────", "──────────", "───────────"],
                 ["getmoney", "", "", "Gets the amount of money the player has"],
                 ["getheart", "character", "", "Gets the amount of heart the player has with a specific girl"],
                 ["addmoney", "amount", "", "Adds the given amount of money to the player"],
                 ["addheart", "character", "amount", "Adds the given amount of heart to a specific girl"],
                 ["addkeys", "amount", "", "Adds the given amount of keys to the player's inventory"],
+                ["getkeys", "", "", "Gets the amount of keys the player has"],
                 ["characters", "", "", "Shows a list of all characters present in the game"],
                 ["export", "", "", `Exports the loaded save file in ${__dirname}/backups/TON`],
                 ["help", "", "", "Displays this menu"]
-            )
+            ], {align: ['l', 'l', 'l', 'l']})
             console.log(gradient.atlas(cmds.toString()))
             break
         default:
@@ -119,9 +118,9 @@ const shell = (file) => {
 }
 
 const main = async() => {
-    !fs.existsSync(`${__dirname}/backups`) ? fs.mkdirSync(`${__dirname}/backups/TON`) : null
+    !existsSync(`${__dirname}/backups`) ? mkdirSync(`${__dirname}/backups/TON`) : null
     let file = process.argv[2]
-    if (!fs.existsSync(parseGameDirectory(file))) {
+    if (!existsSync(parseGameDirectory(file))) {
         console.log(gradient('red', 'red')("This save file does not exists"))
         console.log(process.argv)
         let files = getFileList()
