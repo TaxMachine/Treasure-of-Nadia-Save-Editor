@@ -1,6 +1,6 @@
 # Treasure of Nadia Save Editor
 
-Simple save editor for Treasure of Nadia that allows you to safely modify your money, hearts, chest keys and change your username. Much more features should be added in the future
+Simple save editor for Treasure of Nadia that allows you to safely modify your money, hearts, chest keys and change your username. More features should be added in the future
 
 ## Installing
 - Install [Node.JS](https://nodejs.org/)
